@@ -1,0 +1,27 @@
+{
+  "name": "online_judge",
+  "version": "1.0.0",
+  "description": "A platform for testing problem solving skills",
+  "main": "app.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RajSahu1331/Judge.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RajSahu1331/Judge/issues"
+  },
+  "homepage": "https://github.com/RajSahu1331/Judge#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "mongoose": "^7.4.1",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0"
+  }
+}
