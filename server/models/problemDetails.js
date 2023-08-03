@@ -1,35 +1,22 @@
 const mongoose = require('mongoose')
-
 const Schema = mongoose.Schema
 
 const ProblemSchema = new Schema({
     title:{
         type: String,
-        required : true,
+        // required : [true, 'Please write the Problem Name'],
+        unique : true,
     },
-    Statement:{
+    description:{
         type : String,
-        required : true,
+        // required : [true, 'Please describe the Problem'],
     },
     difficulty:{
         typr:String,
         enum :['easy', 'medium', 'hard'],
-        required : true,
+        // required : [true, 'Please describe the Difficulty'],
     },
-    examples:[{
-        type:Object,
-        input:{
-            typr:String,
-            required: true
-        },
-        output : {
-            type:String,
-            required: true,
-        },
-        explanation:{
-            type:String,
-        }
-    }]
+    
 },{timestamps : true})
 
 const problem = mongoose.model('problemDetails', ProblemSchema)

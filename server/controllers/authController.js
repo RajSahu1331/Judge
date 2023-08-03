@@ -36,6 +36,43 @@ async function handleUserSignUp(req, res){
 
 }
 
+async function UserLogin (req, res)
+{
+    const {email, password} = req.params
+    try{
+        if(!user.findOne(email))
+        {
+            success = false
+            return res.status(400).json({success, error : 'This email is not Registered'})
+        }
+        if(!user.findOne(password))
+        {
+             success = false
+            return res.status(400).json({success, error : 'This password is Incorrect'})
+        }
+        success = true
+        return res.status(200).send({success, message : `Welcome, ${user.findOne(email).userName}`})
+    }
+    catch(err)
+    {
+        console.error(err.message)
+        res.status(500).send("Internal Server Error")
+
+    }
+}
+
+
+module.exports = {
+    handleUserSignUp,
+    // handleUserLogin,
+    UserLogin,
+}
+
+
+
+
+
+/* 
 
 // handleUserLogin (Post Method) for checking existing User in DB 
 async function handleUserLogin(req, res)
@@ -67,43 +104,8 @@ async function handleUserLogin(req, res)
 }
 
 
-async function UserLogin (req, res)
-{
-    const {email, password} = req.params
-    try{
-        if(!user.findOne(email))
-        {
-            success = false
-            return res.status(400).json({success, error : 'This email is not Registered'})
-        }
-        if(!user.findOne(password))
-        {
-             success = false
-            return res.status(400).json({success, error : 'This password is Incorrect'})
-        }
-        success = true
-        return res.status(200).send({success, message : `Welcome, ${user.findOne(email).userName}`})
-    }
-    catch(err)
-    {
-        console.error(err.message)
-        res.status(500).send("Internal Server Error")
-
-    }
-}
 
 
-module.exports = {
-    handleUserSignUp,
-    handleUserLogin,
-    UserLogin,
-}
-
-
-
-
-
-/* 
 // Function for Hnadling Errors
 const HandleError = (err) =>{
     let errors = {userName, email, password}

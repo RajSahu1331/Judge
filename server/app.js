@@ -15,8 +15,8 @@ app.use(cors())
 app.use(express.json())
 
 // Available Routes
-app.use('/api', require('./routes/authentication'))
-
+app.use('/api/auth', require('./routes/authentication'))
+app.use('/api/problems', require('./routes/problem'))
 
 
 app.listen(port, () => {
