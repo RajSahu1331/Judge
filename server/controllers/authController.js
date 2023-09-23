@@ -1,107 +1,42 @@
-const user = require('../models/userDetails')
+const userModel = require("../models/userDetails");
 
-// const jwt = require('jsonwebtoken')
-
-// handleUserSignUp (Post Method) for adding new User in DB 
-async function handleUserSignUp(req, res){
-    const { userName, email, password, role} = req.body
-    // console.log(userName);
-    success = true
-    try{
-        const userName_Exist = user.findOne({userName})
-        const email_Exist = user.findOne({email})
-        // console.log(userName_Exist)
-        if(userName_Exist){
-            success = false
-            return res.status(400).json({success, error:'Sorry , This userName already is being used'})
-        } 
-        if(email_Exist)
-        {
-            success = false
-            return res.status(400).json({success, error:'Sorry , This email already is being used'})
-        }
-        const userData = await user.create({
-        userName,
-        email,
-        password,
-        role,
-        })
-        return res.status(201).json(userData)
-    }
-    catch(err)
-    {
-        console.error(err.message)
-        res.status(500).send("Internal Server Error")
-    }
-
+// handleUserLogin (Post Method) for checking existing User in DB
+async function handleUserLogin(req, res) {
+  try {
+    const userData = req.body;
+    const user = await userModel.checkLogin(userData.email, userData.password);
+    const token = user.createToken(user._id);
+    return res.status(200).json({ token, success: true });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: error.message });
+  }
 }
 
-async function UserLogin (req, res)
-{
-    const {email, password} = req.params
-    try{
-        if(!user.findOne(email))
-        {
-            success = false
-            return res.status(400).json({success, error : 'This email is not Registered'})
-        }
-        if(!user.findOne(password))
-        {
-             success = false
-            return res.status(400).json({success, error : 'This password is Incorrect'})
-        }
-        success = true
-        return res.status(200).send({success, message : `Welcome, ${user.findOne(email).userName}`})
-    }
-    catch(err)
-    {
-        console.error(err.message)
-        res.status(500).send("Internal Server Error")
+// handleUserSignUp (Post Method) for adding new User in DB
+async function handleUserSignUp(req, res) {
+  try {
+    const userData = req.body;
+    await userModel.checkSignup(userData.email);
 
-    }
+    const user = await userModel.create(userData);
+    const token = user.createToken(userData._id);
+    res.cookie("jwt", token, { maxAge: 24 * 60 * 60 * 1000 });
+    return res.status(200).json({ token, success: true });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ error: error.message });
+  }
 }
-
 
 module.exports = {
-    handleUserSignUp,
-    // handleUserLogin,
-    UserLogin,
-}
-
-
-
-
+  handleUserSignUp,
+  handleUserLogin,
+};
 
 /* 
 
-// handleUserLogin (Post Method) for checking existing User in DB 
-async function handleUserLogin(req, res)
-{
-    const { email, password} = req.body;
-    const Registered_email = await user.findOne({email})
-    const Registered_password = await user.findOne({password})
-    
-    try{
-        if(!Registered_email)
-        {
-            success = false
-            return res.status(400).json({success, error : 'This email is not Registered'})
-        }
-        if(!Registered_password)
-        {
-            success = false
-            return res.status(400).json({success, error : 'This password is Incorrect'})
-        }
-        console.log(Registered_email)
-        success = true
-        return res.status(200).json({success , message: `Welcome, ${Registered_email.userName}` })
-    }
-    catch(err){
-        console.error(err.message)
-        res.status(500).send("Internal Server Error")
 
-    }
-}
 
 
 

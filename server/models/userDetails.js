@@ -1,67 +1,92 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
-const Schema = mongoose.Schema
-
-// const { isEmail } = require('validator')
-
-
-// For Hashing the password of the user
-
-const bcrypt = require('bcrypt')
-
+const Schema = mongoose.Schema;
 
 // Designing the User Schema
 
-const UserSchema = new Schema({
-    userName:{
-        type : String,
-        required : [true, 'Please enter your User Name'],
-        unique : true,
+const UserSchema = new Schema(
+  {
+    userName: {
+      type: String,
+      required: [true, "Please enter your User Name"],
     },
-    email:{
-        type : String,
-        required : [true, 'Please enter an Email ID'],
-        unique : true,
-        lowercase : true,
-        // validate : [isEmail, 'Please enter a valid Email ID'],
+    email: {
+      type: String,
+      required: [true, "Please enter an Email ID"],
+      unique: true,
+      lowercase: true,
     },
-    password :{
-        type : String, 
-        required :[true, 'Please enter a password'],
-        minlength: [6, 'Minimum password length should be 6'],
+    password: {
+      type: String,
+      required: [true, "Please enter a password"],
+      minlength: [6, "Minimum password length should be 6"],
     },
-    role:{
-        type: String,
-        required : true,
-    }
+    role: {
+      type: String,
+      enum: ["User", "Admin", "Owner"],
+      default: "User",
+    },
+  },
+  { timestamps: true }
+);
 
-}, {timestamps : true})
-
-
-// Salting the password before saving it in DataBase
-
-UserSchema.pre('save', async function(next){
-    const salt = await bcrypt.gensalt()
-    this.password = await bcrypt.hash(this.password, salt)
-    next() 
-})
+// Creating token
+const maxAge = 24 * 60 * 60;
+// maxAge is in Seconds
+UserSchema.methods.createToken = function (id) {
+  return jwt.sign({ id }, "Codify", {
+    expiresIn: maxAge,
+  });
+};
 
 // Static method to login user
 
-UserSchema.statics.login = async function(email, password,){
-    const user = await this.findOne({ email })
-    if(user)
-    {
-        const auth = await bcryt.compare(password, user.password)
-        if(auth)
-        {
-            return user
-        }
-        throw Error('Incorrect PassWord')
-    }
-    else throw Error('Incorrect Email ID') 
+UserSchema.statics.checkLogin = async function (email, password) {
+  if (email) {
+    const user = await this.findOne({ email });
+    if (!user) throw new Error("User does not exist");
 
-}
+    // Check for the password
 
-const User = mongoose.model('userDetails', UserSchema)
-module.exports = User
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) throw new Error("Invalid Password");
+
+    return user;
+  }
+};
+
+UserSchema.statics.checkSignup = async function (email) {
+  if (email) {
+    const user = await this.findOne({ email });
+    if (user) throw new Error("The email is already registered");
+  }
+  return false;
+};
+
+// Salting the password before saving it in DataBase
+
+UserSchema.pre("save", function (next) {
+  const user = this;
+
+  if (!user.isModified("password")) return next();
+
+  // Generate bcrypt salt
+  bcrypt.genSalt(8, (error, salt) => {
+    if (error) return next(error);
+
+    // Hash the password
+    bcrypt.hash(user.password, salt, (error, hash) => {
+      if (error) return next(error);
+
+      //Assign Hashed Password
+      user.password = hash;
+      return next();
+    });
+  });
+});
+
+const User = mongoose.model("userDetails", UserSchema);
+module.exports = User;
