@@ -1,71 +1,71 @@
-const userModel = require("../models/userDetails");
+const User = require("../models/userDetails");
+const jwt = require("jsonwebtoken");
 
-// handleUserLogin (Post Method) for checking existing User in DB
-async function handleUserLogin(req, res) {
-  try {
-    const userData = req.body;
-    const user = await userModel.checkLogin(userData.email, userData.password);
-    const token = user.createToken(user._id);
-    return res.status(200).json({ token, success: true });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: error.message });
-  }
-}
-
-// handleUserSignUp (Post Method) for adding new User in DB
-async function handleUserSignUp(req, res) {
-  try {
-    const userData = req.body;
-    await userModel.checkSignup(userData.email);
-
-    const user = await userModel.create(userData);
-    const token = user.createToken(userData._id);
-    res.cookie("jwt", token, { maxAge: 24 * 60 * 60 * 1000 });
-    return res.status(200).json({ token, success: true });
-  } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ error: error.message });
-  }
-}
-
-module.exports = {
-  handleUserSignUp,
-  handleUserLogin,
+const createToken = (_id) => {
+  return jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: "3d" });
 };
 
-/* 
+// signup
+const signupUser = async (req, res) => {
+  const { name, email, password, role = "User" } = req.body;
 
+  console.log(name, email, password, role);
 
+  try {
+    const user = await User.signup(name, email, password, role);
+    console.log(user);
+    const token = createToken(user._id);
+    res.status(200).json({ email, token });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+5;
+// login
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
 
+  try {
+    const user = await User.login(email, password);
+    const token = createToken(user._id);
+    res.status(200).json({ email, token });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
 
+//logout
+// Assuming this function is triggered when the user logs out
+const logoutUser = async (req, res) => {
+  try {
+    // Clear the JWT token stored in local storage
+    res.clearCookie("jwtToken"); // This line is for server-side cookies, not client-side local storage
+    // For client-side local storage, you can do this:
+    res.status(200).json({ message: "Logout successful" });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
 
+// GET userName
 
-// Function for Hnadling Errors
-const HandleError = (err) =>{
-    let errors = {userName, email, password}
+const getUser = async (req, res) => {
+  const { email } = req.params; // Destructure the email property from req.params
+  console.log("email", email);
 
-    // incorrect userName
-    if(err.message === 'incorrect email')
-    {
-        errors.email = 'The email is not registered'
-    }
+  try {
+    const user = await User.findOne({ email: email });
+    const userName = user ? user.userName : null;
+    console.log("userName", userName);
+    res.status(200).json(userName);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
 
-    // incorrect password
-    if(err.message === 'incorrect passwrod')
-    {
-        errors.password = 'The password is Incorrect'
-    }
-
-    // duplicate userName error
-
-
-
-    // duplicate email error
-
-    if(err.code === 11000){
-        errors.email = 'this email is already registered'
-        return errors
-    }
-
-}*/
+module.exports = {
+  signupUser,
+  loginUser,
+  logoutUser,
+  getUser,
+};

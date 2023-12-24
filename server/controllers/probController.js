@@ -4,6 +4,7 @@ const getProblem = async (req, res) => {
   try {
     const { _id } = req.params;
     const problem = await Problem.findById(_id);
+    // console.log(problem);
     return res.status(200).json({ problem });
   } catch (error) {
     console.log(error);
@@ -13,8 +14,8 @@ const getProblem = async (req, res) => {
 
 const getProblemsList = async (req, res) => {
   try {
-    const problems = await Problem.find({});
-    return res.status(200).json({ problems });
+    const problems = await Problem.find();
+    return res.status(200).json(problems);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: error.message });

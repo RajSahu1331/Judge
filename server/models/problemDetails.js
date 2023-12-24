@@ -18,6 +18,10 @@ const ProblemSchema = new Schema(
       enum: ["easy", "medium", "hard"],
       // required : [true, 'Please describe the Difficulty'],
     },
+    // problemInput: {
+    //   type: Array,
+    //   default: [],
+    // },
   },
   { timestamps: true }
 );
