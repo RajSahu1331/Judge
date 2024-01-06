@@ -37,7 +37,7 @@ const runStatusHandler = async (req, res) => {
 };
 
 const runHandler = async (req, res) => {
-  const { problemName, language = "cpp", code, userInput } = req.body;
+  const { problemName, language = "cpp", code, userInput, userName } = req.body;
 
   if (code === undefined || !code) {
     return res.status(400).json({ success: false, error: "Code is not given" });
@@ -46,7 +46,13 @@ const runHandler = async (req, res) => {
 
   try {
     const filePath = await generateFile(language, code);
-    job = await new Job({ problemName, language, filePath, userInput }).save();
+    job = await new Job({
+      problemName,
+      language,
+      filePath,
+      userInput,
+      userName,
+    }).save();
     // console.log(job);
     const jobId = job["_id"];
     addJobToQueu(jobId);
@@ -57,7 +63,7 @@ const runHandler = async (req, res) => {
 };
 
 const submitHandler = async (req, res) => {
-  const { problemName, language = "cpp", code } = req.body;
+  const { problemName, language = "cpp", code, userName } = req.body;
 
   fs.readFile(
     `./problemInput/${problemName}.txt`,
@@ -87,6 +93,7 @@ const submitHandler = async (req, res) => {
           language,
           filePath,
           userInput,
+          userName,
         }).save();
         const jobId = job["_id"];
         addJobToQueu(jobId);
@@ -115,7 +122,7 @@ const submitStatusHandler = async (req, res) => {
 
     // Check if job.output exists before converting to string
     const jobOutputAsString = job.output ? job.output.toString() : "";
-
+    console.log("jobOutputAsString", jobOutputAsString);
     let outputStr;
     if (job.language === "cpp") {
       outputStr = jobOutputAsString.slice(0, -2).replace(/\r\n/g, "_");
@@ -199,9 +206,11 @@ const getJobInfo = async (req, res) => {
 };
 
 const getAllSubmissions = async (req, res) => {
-  const problemName = req.params.problemName;
+  const { problemName } = req.params;
+  const { userName } = req.query;
+  console.log(problemName, userName);
   try {
-    const submissions = await Job.find({ problemName: problemName });
+    const submissions = await Job.find({ problemName, userName });
     return res.status(200).json(submissions);
   } catch (error) {
     console.log(error);

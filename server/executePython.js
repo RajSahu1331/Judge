@@ -36,6 +36,15 @@ const executePython = (filepath, userInput) => {
       error: true,
       message: removeFilePathFromError(error.stdout.toString()),
     };
+  } finally {
+    try {
+      // Delete the output file after execution
+      if (fs.existsSync(outPath)) {
+        fs.unlinkSync(outPath);
+      }
+    } catch (unlinkError) {
+      console.error("Error deleting file:", unlinkError);
+    }
   }
 };
 

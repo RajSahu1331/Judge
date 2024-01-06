@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 function CodeEditor({ id }) {
 
     const { userInfo, name } = useSelector((state) => state.auth);
-    console.log(userInfo, name)
+    // console.log(userInfo, name)
 
     const [problemData, setproblemData] = useState('')
     const [language, setLanguage] = useState("cpp");
@@ -70,6 +70,7 @@ function CodeEditor({ id }) {
                 language,
                 code,
                 userInput: customInput,
+                userName: name,
                 // Add other non-file data here
             };
 
@@ -152,6 +153,7 @@ function CodeEditor({ id }) {
                 problemName,
                 language,
                 code,
+                userName: name,
                 // Add other non-file data here
             };
 
@@ -218,7 +220,7 @@ function CodeEditor({ id }) {
     }
 
 
-
+    console.log('problemData', problemData);
 
     return (
         <>
@@ -231,7 +233,23 @@ function CodeEditor({ id }) {
                         <h1 className="text-2xl font-semibold mb-4">{problemData.problem.title}</h1>
                         <div className="mb-6">
                             <h2 className="text-lg font-semibold mb-2">Description</h2>
-                            <p className="text-gray-700 dark:text-gray-300">{problemData.problem.description}</p>
+                            {/* Render the description with line breaks */}
+                            <p
+                                className="text-gray-700 dark:text-gray-300"
+                                dangerouslySetInnerHTML={{ __html: problemData.problem.description.replace(/\n/g, '<br>').replace(/(Constraints\s+->\s+[\w\s<>\-,]+)/g, '<strong>$1</strong>') }}
+                            ></p>
+                        </div>
+                        {/* Render Constraints */}
+                        <div className="mb-6">
+                            <h2 className="text-lg font-semibold mb-2">Constraints</h2>
+                            <ul className="list-disc pl-6">
+                                {/* Parse each line of constraints and render as bullet points */}
+                                {problemData.problem.constraints.split('\n').map((constraint, index) => (
+                                    <li key={index} className="text-gray-700 dark:text-gray-300">
+                                        <strong>{constraint.trim()}</strong>
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
                         <div>
                             <h2 className="text-lg font-semibold mb-2">Examples</h2>
@@ -268,7 +286,7 @@ function CodeEditor({ id }) {
                                 to={`/submit/${problemName}`}
                                 className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
                             >
-                                All Submissions
+                                Submissions
                             </Link>
                         )}
                     </div>

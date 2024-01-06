@@ -83,9 +83,19 @@ const executeCpp = (filepath, userInput) => {
       }),
     ])
       .then((executionOutput) => {
+        // Perform deletion of the output file after execution
+        fs.unlinkSync(outPath); // Delete the compiled output file
+
         return { error: false, message: executionOutput.toString() }; // Convert output to string
       })
       .catch((error) => {
+        // If there's an error during execution, still attempt to delete the output file
+        try {
+          fs.unlinkSync(outPath); // Delete the compiled output file
+        } catch (unlinkError) {
+          console.error("Error deleting file:", unlinkError);
+        }
+
         return { error: true, message: error.toString() }; // Convert error to string
       });
   } catch (error) {

@@ -45,6 +45,14 @@ const Navbar = () => {
         window.location.href = `mailto:rajsahu1331@gmail.com?subject=Codify`;
     };
 
+    const handleLogin = () => {
+        navigate('/login');
+    };
+
+    const handleSignup = () => {
+        navigate('/signup');
+    };
+
     return (
         <nav className="bg-gray-800 p-4 flex justify-between items-center">
             <div className="flex items-center">
@@ -68,9 +76,22 @@ const Navbar = () => {
                 <button className="text-white bg-red-500 hover:bg-red-600 px-4 py-2 rounded mr-4" onClick={openMail}>
                     Contact Me
                 </button>
-                <button className="text-white bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded" onClick={logoutHandler}>
-                    Logout
-                </button>
+                {userInfo ? (
+                    // Render Logout button if user is authenticated
+                    <button className="text-white bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded" onClick={logoutHandler}>
+                        Logout
+                    </button>
+                ) : (
+                    // Render Login and Signup buttons if user is not authenticated
+                    <>
+                        <button className="text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded mr-4" onClick={handleLogin}>
+                            Login
+                        </button>
+                        <button className="text-white bg-green-500 hover:bg-green-600 px-4 py-2 rounded" onClick={handleSignup}>
+                            Signup
+                        </button>
+                    </>
+                )}
             </div>
         </nav>
     );

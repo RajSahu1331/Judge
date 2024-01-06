@@ -10,6 +10,10 @@ const JobSchema = new Schema({
     type: String,
     default: "None",
   },
+  userName: {
+    type: String,
+    default: "",
+  },
   language: {
     type: String,
     required: true,

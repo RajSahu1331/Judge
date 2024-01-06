@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 export default function AllSubmissions() {
 
     const { userInfo, name } = useSelector((state) => state.auth);
-    console.log(userInfo, name)
+    // console.log(userInfo, name)
 
     const { problemName } = useParams();
     const [data, setData] = useState([]);
@@ -17,15 +17,19 @@ export default function AllSubmissions() {
 
     async function fetchData() {
         try {
-            let response = await axios.get(`http://localhost:8000/submission/${problemName}`);
-            const fetchedData = response.data
-            // console.log(fetchedData, "abcd");
+            let response = await axios.get(`http://localhost:8000/submission/${problemName}`, {
+                params: {
+                    userName: name // Include 'name' as a query parameter
+                }
+            });
+            const fetchedData = response.data;
             fetchedData.reverse();
-            setData(fetchedData)
+            setData(fetchedData);
         } catch (err) {
-            console.log("Eror :", err)
+            console.log("Error:", err);
         }
     }
+
     useEffect(() => {
         fetchData();
 
@@ -104,39 +108,47 @@ export default function AllSubmissions() {
                         </tr>
                     </thead>
                     <tbody>
-                        {data
-                            .slice(pageVisited, pageVisited + itemPerPage)
-                            .map((data) => (
-                                <tr key={data._id} className="hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
-                                    onClick={() => handleRowClick(data._id)}>
-                                    <td className='text-center'>
-                                        {/* Style the problem name */}
-                                        <span className="rounded-md px-2 py-1 bg-blue-500 text-white">
-                                            {name}
-                                        </span>
-                                    </td>
-                                    {/* Add other table data */}
-                                    <td className='text-center'>
-                                        {convertToIndianTime(data.submittedAt)}
-                                    </td>
-                                    <td className='text-center'>
-                                        {/* Encapsulated language */}
-                                        <span className="rounded-md px-2 py-1 bg-black text-white">
-                                            {data.language}
-                                        </span>
-                                    </td>
-                                    <td className='text-center'>
-                                        {/* Button for verdict */}
-                                        <button
-                                            className={`rounded-md px-2 py-1 ${data.verdict === "correct" ? "bg-green-500 text-white" : "bg-red-500 text-white"}`}
-                                        >
-                                            {data.verdict}
-                                        </button>
-                                    </td>
+                        {userInfo ?
+                            data
+                                .slice(pageVisited, pageVisited + itemPerPage)
+                                .map((data) => (
+                                    <tr key={data._id} className="hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                                        onClick={() => handleRowClick(data._id)}>
+                                        <td className='text-center'>
+                                            {/* Style the problem name */}
+                                            <span className="rounded-md px-2 py-1 bg-blue-500 text-white">
+                                                {name}
+                                            </span>
+                                        </td>
+                                        {/* Add other table data */}
+                                        <td className='text-center'>
+                                            {convertToIndianTime(data.submittedAt)}
+                                        </td>
+                                        <td className='text-center'>
+                                            {/* Encapsulated language */}
+                                            <span className="rounded-md px-2 py-1 bg-black text-white">
+                                                {data.language}
+                                            </span>
+                                        </td>
+                                        <td className='text-center'>
+                                            {/* Button for verdict */}
+                                            <button
+                                                className={`rounded-md px-2 py-1 ${data.verdict === "correct" ? "bg-green-500 text-white" : "bg-red-500 text-white"}`}
+                                            >
+                                                {data.verdict}
+                                            </button>
+                                        </td>
 
-                                    {/* Other table data */}
-                                </tr>
-                            ))}
+                                        {/* Other table data */}
+                                    </tr>
+                                ))
+                            :
+                            <tr>
+                                <td colSpan="4" className="text-center">
+                                    Please Login For Submissions
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
                 <br />
