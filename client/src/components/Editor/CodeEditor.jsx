@@ -394,7 +394,7 @@ function CodeEditor({ id }) {
                                     </button>
                                 </>
                             ) : (
-                                <span className="text-red-500">Please log in to use this functionality.</span>
+                                <span className="text-red-500">Please Login or Signup to Run or Submit your code.</span>
                             )}
                         </div>
                     </div>

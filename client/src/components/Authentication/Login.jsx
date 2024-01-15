@@ -47,7 +47,7 @@ const Login = () => {
                             <div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
                                 <div className="relative">
                                     <input
-                                        autocomplete="off"
+                                        autoComplete="off"
                                         id="email"
                                         name="email"
                                         type="text"
