@@ -17,18 +17,6 @@ Codify is a full-stack web application inspired by LeetCode, designed to provide
 - **Authentication:** JWT
 - **Message Queue:** Bull Queue (Redis)
 
-## Project Structure
-
-codify/
-├── client/   # Frontend code
-│   └── ...
-├── server/   # Backend code
-│   └── ...
-├── public/   # Static assets
-│   └── ...
-├── README.md   # This file
-└── ...
-
 ## Getting Started
 
 ### Prerequisites:
