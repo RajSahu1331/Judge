@@ -1,4 +1,4 @@
-# Codify: A Mini LeetCode Clone
+# Codify
 
 ## Project Description
 
