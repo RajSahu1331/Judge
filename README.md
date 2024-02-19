@@ -1,5 +1,11 @@
 # Codify
 
+## Demo Video
+
+Check out the demo video for a quick overview of Codify:
+
+[![Codify Demo](https://img.youtube.com/vi/_M8xU1QuxWE/0.jpg)](https://youtu.be/_M8xU1QuxWE)
+
 ## Project Description
 
 Codify is a full-stack web application inspired by LeetCode, designed to provide a platform for programmers to practice and improve their coding skills. It offers features like:
