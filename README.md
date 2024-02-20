@@ -4,7 +4,7 @@
 
 Check out the demo video for a quick overview of Codify:
 
-[![Codify Demo](https://img.youtube.com/vi/_M8xU1QuxWE/0.jpg)](https://youtu.be/_M8xU1QuxWE)
+[![Codify Demo](https://img.youtube.com/vi/_M8xU1QuxWE/0.jpg)](https://www.youtube.com/embed/_M8xU1QuxWE)
 
 ## Project Description
 
